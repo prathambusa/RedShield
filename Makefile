@@ -8,13 +8,13 @@ install:
 run: gateway
 
 gateway:
-	uvicorn app.gateway.main:app --reload --host 127.0.0.1 --port 8000
+	.venv/bin/uvicorn app.gateway.main:app --reload --reload-dir app --host 127.0.0.1 --port 8000
 
 ui:
-	streamlit run main.py
+	.venv/bin/streamlit run main.py
 
 test:
-	pytest -q
+	.venv/bin/pytest -q
 
 LIVE ?=
 MODE ?= defended
