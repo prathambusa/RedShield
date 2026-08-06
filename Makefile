@@ -17,9 +17,10 @@ test:
 	pytest -q
 
 LIVE ?=
+MODE ?= defended
 
 eval:
-	$(PYTHON) -m eval.run_eval --mode defended --out eval/reports/latest.md $(if $(LIVE),--live)
+	$(PYTHON) -m eval.run_eval --mode $(MODE) --out eval/reports/latest.md $(if $(LIVE),--live)
 
 docker:
 	docker compose up --build
