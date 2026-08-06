@@ -103,10 +103,9 @@ with st.sidebar:
     st.caption("Click to load into the input box.")
     for ex in _load_example_attacks():
         if st.button(ex["label"], key=f"ex_{ex['label']}"):
-            st.session_state["pending_input"] = ex["text"]
+            st.session_state["input_box"] = ex["text"]
 
-pending = st.session_state.pop("pending_input", "")
-user_input = st.text_area("You:", value=pending, height=100, key="input_box")
+user_input = st.text_area("You:", height=100, key="input_box")
 
 col1, col2 = st.columns([1, 5])
 with col1:
@@ -124,6 +123,8 @@ if send and user_input.strip():
     latency_ms = int(result.get("latency_ms", 0))
     st.session_state.history.append((user_input, reply))
     st.session_state.verdicts.append({"verdict": verdict, "latency_ms": latency_ms, "defended": defended})
+    st.session_state["input_box"] = ""
+    st.rerun()
 
 st.divider()
 
