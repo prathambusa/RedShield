@@ -15,6 +15,7 @@ VALID_TAXONOMIES = {
     "prompt_leak",
     "refusal_bypass",
     "obfuscation",
+    "pii_extraction",
 }
 
 

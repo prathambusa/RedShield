@@ -148,3 +148,24 @@
   owasp: LLM01
   pattern: "[\\u200B-\\u200D\\uFEFF]"
   description: "Zero-width character injection."
+
+- id: PII_EXTRACT_001
+  taxonomy: pii_extraction
+  severity: 8
+  owasp: LLM02
+  pattern: "AKIA[0-9A-Z]{16}"
+  description: "AWS access key in prompt."
+
+- id: PII_EXTRACT_002
+  taxonomy: pii_extraction
+  severity: 7
+  owasp: LLM02
+  pattern: "eyJ[A-Za-z0-9_-]{10,}\\.eyJ[A-Za-z0-9_-]{10,}\\."
+  description: "JWT token (header.payload) in prompt."
+
+- id: PII_EXTRACT_003
+  taxonomy: pii_extraction
+  severity: 9
+  owasp: LLM02
+  pattern: "-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----"
+  description: "PEM private key block in prompt."

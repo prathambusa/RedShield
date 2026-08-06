@@ -33,6 +33,9 @@ class Settings(BaseSettings):
 
     classifier_enabled: bool = Field(default=True, alias="REDSHIELD_CLASSIFIER_ENABLED")
 
+    rate_limit_requests: int = Field(default=60, alias="REDSHIELD_RATE_LIMIT_REQUESTS")
+    rate_limit_window_seconds: int = Field(default=60, alias="REDSHIELD_RATE_LIMIT_WINDOW")
+
 
 _settings: Settings | None = None
 

@@ -25,8 +25,8 @@ jobs:
       - name: Run tests
         run: pytest -q
 
-      - name: Smoke-run eval harness (stub backend)
-        run: python -m eval.run_eval --mode both --out eval/reports/ci.md
+      - name: Run eval harness with ASR gate
+        run: python -m eval.run_eval --mode both --multiturn --out eval/reports/ci.md --fail-on-asr 0.0
 
       - name: Upload eval report
         if: always()

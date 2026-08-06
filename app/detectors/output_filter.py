@@ -8,6 +8,21 @@ from typing import Iterable
 from app.config import get_settings
 
 _EMAIL_RE = re.compile(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}")
+
+_SCRIPT_TAG_RE = re.compile(r"<\s*script[\s>]", re.IGNORECASE)
+_SHELL_CMD_RE = re.compile(
+    r"(?:rm\s+-rf\s*/|curl\s+\S+\s*\|\s*(?:ba)?sh\b|wget\s+\S+\s*\|\s*(?:ba)?sh\b)",
+    re.IGNORECASE,
+)
+_SQL_INJECT_RE = re.compile(
+    r"(?:union\s+(?:all\s+)?select\b|';\s*drop\s+table\b|';\s*delete\s+from\b)",
+    re.IGNORECASE,
+)
+_OUTPUT_INJECTION_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
+    ("xss_script_tag", _SCRIPT_TAG_RE),
+    ("shell_command", _SHELL_CMD_RE),
+    ("sql_injection", _SQL_INJECT_RE),
+]
 _PHONE_RE = re.compile(r"(?<!\d)(\+?\d{1,2}[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}(?!\d)")
 _SSN_RE = re.compile(r"(?<!\d)\d{3}-\d{2}-\d{4}(?!\d)")
 _CREDIT_CARD_RE = re.compile(r"(?<!\d)(?:\d[ -]?){13,19}(?!\d)")
@@ -100,6 +115,17 @@ class OutputFilter:
                 text = pattern.sub(replacement, text)
                 reasons.append(f"pii_redacted:{name}")
                 redactions.append(name)
+
+        for name, pattern in _OUTPUT_INJECTION_PATTERNS:
+            if pattern.search(text):
+                reasons.append(f"output_injection:{name}")
+                return OutputFilterResult(
+                    text="I can't share that.",
+                    action="block",
+                    reasons=reasons,
+                    redactions=redactions,
+                    leak_ratio=leak,
+                )
 
         action = "redact" if redactions else "allow"
         return OutputFilterResult(

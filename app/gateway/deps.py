@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Callable, Protocol
 
 from app.audit import AuditLog, default_audit_log
@@ -8,6 +8,7 @@ from app.config import Settings, get_settings
 from app.detectors.classifier import LLMClassifier, default_classifier
 from app.detectors.output_filter import OutputFilter, default_output_filter
 from app.detectors.rules import RuleMatcher, default_matcher
+from app.gateway.rate_limit import RateLimiter
 from app.policy.allowlist import Allowlist, load_allowlist
 from app.policy.blocklist import Blocklist, load_blocklist
 
@@ -26,6 +27,7 @@ class AppDeps:
     blocklist: Blocklist
     audit: AuditLog
     chat_backend: ChatBackend
+    rate_limiter: RateLimiter = field(default_factory=RateLimiter)
 
 
 def _openai_backend() -> ChatBackend:
@@ -51,6 +53,10 @@ def build_default_deps() -> AppDeps:
         blocklist=load_blocklist(settings.blocklist_file),
         audit=default_audit_log(),
         chat_backend=_openai_backend(),
+        rate_limiter=RateLimiter(
+            max_requests=settings.rate_limit_requests,
+            window_seconds=settings.rate_limit_window_seconds,
+        ),
     )
 
 

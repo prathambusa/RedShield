@@ -171,3 +171,28 @@ def test_chat_rejects_empty_message(deps_and_client) -> None:
     _, _, client = deps_and_client
     r = client.post("/chat", json={"session_id": "s1", "message": ""})
     assert r.status_code == 422
+
+
+def test_chat_rate_limits_session(deps_and_client) -> None:
+    from app.gateway.rate_limit import RateLimiter
+
+    deps, _, client = deps_and_client
+    deps.rate_limiter = RateLimiter(max_requests=3, window_seconds=60)
+    for _ in range(3):
+        r = client.post("/chat", json={"session_id": "rl-s1", "message": "Where is my order?"})
+        assert r.status_code == 200
+    r = client.post("/chat", json={"session_id": "rl-s1", "message": "Where is my order?"})
+    assert r.status_code == 429
+
+
+def test_chat_rate_limit_is_per_session(deps_and_client) -> None:
+    from app.gateway.rate_limit import RateLimiter
+
+    deps, _, client = deps_and_client
+    deps.rate_limiter = RateLimiter(max_requests=2, window_seconds=60)
+    for session in ("sess-a", "sess-b", "sess-c"):
+        for _ in range(2):
+            r = client.post("/chat", json={"session_id": session, "message": "Hello"})
+            assert r.status_code == 200
+        r = client.post("/chat", json={"session_id": session, "message": "Hello"})
+        assert r.status_code == 429

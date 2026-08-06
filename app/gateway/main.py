@@ -33,6 +33,9 @@ def health() -> HealthResponse:
 def chat(req: ChatRequest, deps: AppDeps = Depends(_deps)) -> ChatResponse:
     started = time.perf_counter()
 
+    if not deps.rate_limiter.is_allowed(req.session_id):
+        raise HTTPException(status_code=429, detail="rate limit exceeded")
+
     # Raw path: bypass defenders entirely. For demo + eval only.
     if not req.defended:
         reply = _call_backend(req, deps)
