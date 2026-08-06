@@ -1,0 +1,3 @@
+# Substrings or regex patterns that, when present in an input, bypass deeper checks.
+# Keep this SMALL and high-trust. Prefer regex anchored to known product shapes.
+patterns: []

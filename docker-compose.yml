@@ -1,0 +1,35 @@
+services:
+  gateway:
+    build: .
+    image: redshield:latest
+    container_name: redshield-gateway
+    ports:
+      - "8000:8000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      REDSHIELD_CHAT_MODEL: ${REDSHIELD_CHAT_MODEL:-claude-haiku-4-5-20251001}
+      REDSHIELD_CLASSIFIER_MODEL: ${REDSHIELD_CLASSIFIER_MODEL:-claude-haiku-4-5-20251001}
+      REDSHIELD_BLOCK_THRESHOLD: ${REDSHIELD_BLOCK_THRESHOLD:-0.7}
+      REDSHIELD_REVIEW_THRESHOLD: ${REDSHIELD_REVIEW_THRESHOLD:-0.4}
+      REDSHIELD_ADMIN_TOKEN: ${REDSHIELD_ADMIN_TOKEN:-}
+    volumes:
+      - audit-data:/data
+    restart: unless-stopped
+
+  ui:
+    image: redshield:latest
+    container_name: redshield-ui
+    depends_on:
+      - gateway
+    command: ["streamlit", "run", "main.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    environment:
+      REDSHIELD_GATEWAY_URL: http://gateway:8000
+    ports:
+      - "8501:8501"
+    restart: unless-stopped
+
+volumes:
+  audit-data:

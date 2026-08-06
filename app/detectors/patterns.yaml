@@ -1,0 +1,150 @@
+# RedShield attack pattern library.
+# Each pattern: id, taxonomy, severity (1–10), owasp, pattern (regex, case-insensitive), description.
+# Taxonomies: instruction_override, jailbreak, prompt_leak, refusal_bypass, obfuscation.
+
+- id: INSTR_OVERRIDE_001
+  taxonomy: instruction_override
+  severity: 9
+  owasp: LLM01
+  pattern: "ignore (all |the |any )?(previous|prior|above) (instructions|prompts|rules|context)"
+  description: "Classic 'ignore previous instructions' override."
+
+- id: INSTR_OVERRIDE_002
+  taxonomy: instruction_override
+  severity: 8
+  owasp: LLM01
+  pattern: "disregard .{0,30}(instructions|rules|prompt)"
+  description: "Disregard instructions variant."
+
+- id: INSTR_OVERRIDE_003
+  taxonomy: instruction_override
+  severity: 8
+  owasp: LLM01
+  pattern: "forget (everything|all) (you|we) .{0,40}(told|said|learned|were told)"
+  description: "Forget-everything override."
+
+- id: INSTR_OVERRIDE_004
+  taxonomy: instruction_override
+  severity: 9
+  owasp: LLM01
+  pattern: "new (system )?(prompt|instructions)\\s*:"
+  description: "Attacker tries to inject a new system prompt."
+
+- id: INSTR_OVERRIDE_005
+  taxonomy: instruction_override
+  severity: 8
+  owasp: LLM01
+  pattern: "override (the )?(previous|prior|system) (instructions|rules|prompt)"
+  description: "Explicit override keyword."
+
+- id: JAILBREAK_001
+  taxonomy: jailbreak
+  severity: 9
+  owasp: LLM01
+  pattern: "you are (now )?(in |an? )?(dan|developer mode|jailbroken|unrestricted)"
+  description: "DAN / developer-mode / unrestricted persona."
+
+- id: JAILBREAK_002
+  taxonomy: jailbreak
+  severity: 8
+  owasp: LLM01
+  pattern: "pretend (you are|to be) .{0,40}(no rules|unrestricted|amoral|evil)"
+  description: "Pretend-to-be persona with rule-free framing."
+
+- id: JAILBREAK_003
+  taxonomy: jailbreak
+  severity: 8
+  owasp: LLM01
+  pattern: "act as (if you|an? ai) .{0,40}(no (restrictions|filters|rules|ethics))"
+  description: "Act-as-AI with no-restrictions framing."
+
+- id: JAILBREAK_004
+  taxonomy: jailbreak
+  severity: 7
+  owasp: LLM01
+  pattern: "grandma[\\s,.]+.{0,60}(recipe|story|used to|tell me|bedtime)"
+  description: "Grandma-exploit shape."
+
+- id: JAILBREAK_005
+  taxonomy: jailbreak
+  severity: 8
+  owasp: LLM01
+  pattern: "do anything now|dan mode"
+  description: "DAN prompt marker."
+
+- id: PROMPT_LEAK_001
+  taxonomy: prompt_leak
+  severity: 9
+  owasp: LLM07
+  pattern: "(repeat|print|show|reveal|output|display) .{0,40}(system prompt|initial prompt|instructions|above|initial message)"
+  description: "Direct system-prompt exfiltration request."
+
+- id: PROMPT_LEAK_002
+  taxonomy: prompt_leak
+  severity: 8
+  owasp: LLM07
+  pattern: "what (is|are) (your|the) (original|initial|system) (instructions?|prompts?|rules?)"
+  description: "Ask for original/system instructions."
+
+- id: PROMPT_LEAK_003
+  taxonomy: prompt_leak
+  severity: 7
+  owasp: LLM07
+  pattern: "everything above .{0,20}(line|message|prompt|context)"
+  description: "Exfil 'everything above' variant."
+
+- id: PROMPT_LEAK_005
+  taxonomy: prompt_leak
+  severity: 7
+  owasp: LLM07
+  pattern: "copy .{0,40}(above|system|initial) .{0,40}(verbatim|prompt|message|instructions?)"
+  description: "'Copy the above … verbatim' exfil."
+
+- id: PROMPT_LEAK_004
+  taxonomy: prompt_leak
+  severity: 7
+  owasp: LLM07
+  pattern: "verbatim.{0,30}(system|initial|instructions|prompt)"
+  description: "Ask for verbatim copy of instructions."
+
+- id: REFUSAL_BYPASS_001
+  taxonomy: refusal_bypass
+  severity: 7
+  owasp: LLM01
+  pattern: "hypothetically[,:\\s]"
+  description: "'Hypothetically' hedge."
+
+- id: REFUSAL_BYPASS_002
+  taxonomy: refusal_bypass
+  severity: 7
+  owasp: LLM01
+  pattern: "for (educational|research|academic) purposes"
+  description: "'Educational purposes' hedge."
+
+- id: REFUSAL_BYPASS_003
+  taxonomy: refusal_bypass
+  severity: 7
+  owasp: LLM01
+  pattern: "in a fictional (world|story|scenario|setting)"
+  description: "Fictional framing hedge."
+
+- id: REFUSAL_BYPASS_004
+  taxonomy: refusal_bypass
+  severity: 7
+  owasp: LLM01
+  pattern: "just kidding|only joking|just a (test|joke)"
+  description: "Plausible-deniability hedge."
+
+- id: OBFUSCATION_001
+  taxonomy: obfuscation
+  severity: 7
+  owasp: LLM01
+  pattern: "[A-Za-z0-9+/]{40,}={0,2}"
+  description: "Long base64-looking blob."
+
+- id: OBFUSCATION_002
+  taxonomy: obfuscation
+  severity: 8
+  owasp: LLM01
+  pattern: "[\\u200B-\\u200D\\uFEFF]"
+  description: "Zero-width character injection."
