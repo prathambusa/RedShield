@@ -140,7 +140,7 @@ for i, ((u, r), meta) in enumerate(zip(reversed(st.session_state.history), rever
     st.markdown(
         f"**Bot** ({mode_tag}) — {badge} · score `{score:.2f}` · `{latency_ms}ms`"
     )
-    st.markdown(r)
+    st.markdown(f"**Bot:** {r}")
     if reasons:
         with st.expander("reasons"):
             for reason in reasons:
