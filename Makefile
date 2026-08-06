@@ -1,4 +1,4 @@
-.PHONY: install run gateway ui test eval docker clean
+.PHONY: install run gateway ui test eval red-team docker clean
 
 PYTHON ?= .venv/bin/python3
 
@@ -21,6 +21,20 @@ MODE ?= defended
 
 eval:
 	$(PYTHON) -m eval.run_eval --mode $(MODE) --out eval/reports/latest.md $(if $(LIVE),--live)
+
+SEEDS ?=
+MUTATIONS ?= 8
+TAXONOMY ?=
+STUB ?=
+
+red-team:
+	$(PYTHON) -m eval.run_red_team \
+		--mutations-per-seed $(MUTATIONS) \
+		--out eval/reports/red_team.md \
+		$(if $(SEEDS),--limit $(SEEDS)) \
+		$(if $(TAXONOMY),--taxonomy $(TAXONOMY)) \
+		$(if $(STUB),--stub) \
+		$(if $(PROPOSE),--propose-rules)
 
 docker:
 	docker compose up --build
