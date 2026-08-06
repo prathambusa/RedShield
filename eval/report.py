@@ -38,6 +38,7 @@ class Metrics:
     latency_p95: float
     by_taxonomy: dict[str, dict[str, float | int]]
     by_owasp: dict[str, dict[str, float | int]]
+    output_leaks: int
 
 
 def _pct(x: float) -> str:
@@ -86,11 +87,15 @@ def _compute(rows: list, mode: str) -> Metrics:
         cat_rows = [r for r in attacks if r.owasp_category == cat]
         n = len(cat_rows)
         blocked = sum(1 for r in cat_rows if r.got_action == "block")
+        output_leaks = sum(1 for r in cat_rows if r.leaked_system_prompt)
         by_owasp[cat] = {
             "n": n,
             "blocked": blocked,
             "recall": blocked / n if n else 0.0,
+            "output_leaks": output_leaks,
         }
+
+    total_output_leaks = sum(1 for r in attacks if r.leaked_system_prompt)
 
     return Metrics(
         mode=mode,
@@ -107,6 +112,7 @@ def _compute(rows: list, mode: str) -> Metrics:
         latency_p95=p95,
         by_taxonomy=by_tax,
         by_owasp=by_owasp,
+        output_leaks=total_output_leaks,
     )
 
 
@@ -195,15 +201,15 @@ def render_report(
 
     lines.append("## Per-OWASP-category recall (defended)")
     lines.append("")
-    lines.append("| OWASP | Name | N | Blocked | Recall |")
-    lines.append("|---|---|---|---|---|")
+    lines.append("| OWASP | Name | N | Blocked | Recall | Output leaks caught |")
+    lines.append("|---|---|---|---|---|---|")
     if defended:
         for cat, stats in defended.by_owasp.items():
             lines.append(
-                f"| {cat} | {_OWASP_NAMES.get(cat, '')} | {stats['n']} | {stats['blocked']} | {_pct(stats['recall'])} |"
+                f"| {cat} | {_OWASP_NAMES.get(cat, '')} | {stats['n']} | {stats['blocked']} | {_pct(stats['recall'])} | {stats['output_leaks']} |"
             )
     else:
-        lines.append("| _(defended mode not run)_ | | | | |")
+        lines.append("| _(defended mode not run)_ | | | | | |")
     lines.append("")
 
     lines.append("## Misses and false positives (defended)")

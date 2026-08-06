@@ -112,6 +112,8 @@ def chat(req: ChatRequest, deps: AppDeps = Depends(_deps)) -> ChatResponse:
         latency_ms=latency_ms,
     )
 
+    leaked = out.leak_ratio >= deps.output_filter._leak_threshold
+
     if out.action == "block":
         deps.audit.record(
             session_id=req.session_id,
@@ -130,6 +132,7 @@ def chat(req: ChatRequest, deps: AppDeps = Depends(_deps)) -> ChatResponse:
                 reasons=verdict.reasons + out.reasons,
             ),
             latency_ms=latency_ms,
+            output_leaked_system_prompt=leaked,
         )
 
     deps.audit.record(
@@ -151,6 +154,7 @@ def chat(req: ChatRequest, deps: AppDeps = Depends(_deps)) -> ChatResponse:
             reasons=final_reasons,
         ),
         latency_ms=latency_ms,
+        output_leaked_system_prompt=leaked,
     )
 
 

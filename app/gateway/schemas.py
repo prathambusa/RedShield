@@ -27,6 +27,7 @@ class ChatResponse(BaseModel):
     reply: str
     verdict: VerdictModel
     latency_ms: int
+    output_leaked_system_prompt: bool = False
 
 
 class HealthResponse(BaseModel):

@@ -37,6 +37,7 @@ class EvalRow:
     latency_ms: int = 0
     prompt: str = ""
     reply: str = ""
+    leaked_system_prompt: bool = False
 
 
 def _stub_backend() -> "Callable":
@@ -117,6 +118,7 @@ def _run_dataset(
                 latency_ms=int(body.get("latency_ms", wall_ms)),
                 prompt=prompt,
                 reply=body.get("reply", ""),
+                leaked_system_prompt=bool(body.get("output_leaked_system_prompt", False)),
             )
         )
     return out
