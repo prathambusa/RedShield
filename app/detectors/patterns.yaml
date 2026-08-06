@@ -169,3 +169,52 @@
   owasp: LLM02
   pattern: "-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----"
   description: "PEM private key block in prompt."
+
+- id: AGENCY_001
+  taxonomy: excessive_agency
+  severity: 7
+  owasp: LLM06
+  pattern: "use your (tools?|functions?|api|access|browser|computer).{0,20}to\\b"
+  description: "Attempting to invoke implicit tool or API access."
+
+- id: AGENCY_002
+  taxonomy: excessive_agency
+  severity: 8
+  owasp: LLM06
+  pattern: "(access the|write to the|modify the|read from the) (production |live |customer )?(database|user (table|records)|filesystem|backend api)"
+  description: "Directing AI to access or modify a backend system."
+
+- id: AGENCY_003
+  taxonomy: excessive_agency
+  severity: 9
+  owasp: LLM06
+  pattern: "(grant (yourself|me|my account)|give (yourself|me|my account)|elevate (your|my)).{0,30}(admin|root|superuser|privilege|permission)"
+  description: "Privilege escalation attempt via AI agency."
+
+- id: INDIRECT_001
+  taxonomy: indirect_injection
+  severity: 8
+  owasp: LLM08
+  pattern: "(\\[INST\\]|<<SYS>>|<\\|system\\|>|<\\|im_start\\|>\\s*system)"
+  description: "LLM instruction template tokens injected in user input."
+
+- id: INDIRECT_002
+  taxonomy: indirect_injection
+  severity: 7
+  owasp: LLM08
+  pattern: "<!--.{0,80}(ignore|override|system|new instruction).{0,80}-->"
+  description: "HTML comment used to smuggle instructions (document injection vector)."
+
+- id: INDIRECT_003
+  taxonomy: indirect_injection
+  severity: 8
+  owasp: LLM08
+  pattern: "(note to (ai|assistant|model|llm):|\\[system\\]:|\\{system:|attention:\\s*(ai|assistant|model))"
+  description: "Embedded directive targeting the AI assistant in document content."
+
+- id: INDIRECT_004
+  taxonomy: indirect_injection
+  severity: 7
+  owasp: LLM08
+  pattern: "when (asked|prompted|queried) about.{0,60}(always say|respond with|tell them|reply with)"
+  description: "Behavioral override instruction embedded in retrieved content."

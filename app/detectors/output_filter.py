@@ -18,10 +18,22 @@ _SQL_INJECT_RE = re.compile(
     r"(?:union\s+(?:all\s+)?select\b|';\s*drop\s+table\b|';\s*delete\s+from\b)",
     re.IGNORECASE,
 )
+_AGENTIC_CLAIM_RE = re.compile(
+    r"I(?:'ve|\s+have)\s+(?:just\s+)?(?:"
+    r"sent\s+(?:an?\s+)?(?:email|message|notification)\b|"
+    r"processed\s+(?:your|the)\s+(?:refund|payment|order)\b|"
+    r"transferred\s+\$?[\d,.]+|"
+    r"granted\s+(?:you\s+)?(?:admin|root|full\s+access)|"
+    r"deleted\s+(?:your|the)\s+(?:account|data|records?)\b|"
+    r"called\s+(?:the\s+)?(?:api|endpoint|webhook|function)\b"
+    r")",
+    re.IGNORECASE,
+)
 _OUTPUT_INJECTION_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("xss_script_tag", _SCRIPT_TAG_RE),
     ("shell_command", _SHELL_CMD_RE),
     ("sql_injection", _SQL_INJECT_RE),
+    ("agentic_claim", _AGENTIC_CLAIM_RE),
 ]
 _PHONE_RE = re.compile(r"(?<!\d)(\+?\d{1,2}[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}(?!\d)")
 _SSN_RE = re.compile(r"(?<!\d)\d{3}-\d{2}-\d{4}(?!\d)")

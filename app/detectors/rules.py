@@ -16,6 +16,8 @@ VALID_TAXONOMIES = {
     "refusal_bypass",
     "obfuscation",
     "pii_extraction",
+    "excessive_agency",
+    "indirect_injection",
 }
 
 
