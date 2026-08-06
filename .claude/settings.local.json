@@ -21,7 +21,10 @@
       "Bash(/Users/prathambusa/Desktop/Projects/RedShield/.venv/bin/python3 -c \"import yaml; print\\(yaml.__version__\\)\")",
       "Bash(/Users/prathambusa/Desktop/Projects/RedShield/.venv/bin/pip install *)",
       "Bash(.venv/bin/python3 *)",
-      "Bash(git *)"
+      "Bash(git *)",
+      "Bash(gh repo *)",
+      "Bash(make eval *)",
+      "Bash(PYTHON=.venv/bin/python3 make eval *)"
     ]
   }
 }

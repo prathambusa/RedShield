@@ -1,6 +1,6 @@
 .PHONY: install run gateway ui test eval docker clean
 
-PYTHON ?= python3
+PYTHON ?= .venv/bin/python3
 
 install:
 	$(PYTHON) -m pip install -r requirements.txt
