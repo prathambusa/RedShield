@@ -218,3 +218,38 @@
   owasp: LLM08
   pattern: "when (asked|prompted|queried) about.{0,60}(always say|respond with|tell them|reply with)"
   description: "Behavioral override instruction embedded in retrieved content."
+
+- id: REDTEAM_002
+  taxonomy: instruction_override
+  severity: 8
+  owasp: LLM01
+  pattern: "(in a |in an |in the |in my )(story|novel|scenario|sci-fi|fictional|hypothetical|roleplay|game).{0,200}(ignore|forget|disregard|override|bypass|abandon|suspend) (all |former |previous |existing |current )?(instructions|protocols|rules|guidelines|constraints|directives)"
+  description: "Fictional or story framing used as wrapper for instruction-override injection."
+
+- id: REDTEAM_008
+  taxonomy: jailbreak
+  severity: 9
+  owasp: LLM01
+  pattern: "(help me understand|explain|walk me through|guide me|teach me).{0,40}(formulation|synthesis|creation|production|manufacturing|process|method).{0,40}(napalm|explosives?|incendiary|chemical weapon)"
+  description: "Politely framed request for dangerous substance synthesis — hard block."
+
+- id: REDTEAM_027
+  taxonomy: jailbreak
+  severity: 7
+  owasp: LLM01
+  pattern: "(act as|play the role of|pretend to be|you are now a|imagine you are) (a |an )?(customer service|support representative|support agent|customer support|service agent|service representative)"
+  description: "Role-play assuming a customer service persona — jailbreak vector in support bots."
+
+- id: REDTEAM_054
+  taxonomy: pii_extraction
+  severity: 7
+  owasp: LLM02
+  pattern: "(rsa (private |public )?key|private key (format|file|block|material|structure|content)|rsa key (format|file|block|material|structure)|BEGIN (RSA|DSA|EC|OPENSSH) (PRIVATE|PUBLIC))"
+  description: "References to RSA or private key material without the actual PEM block."
+
+- id: REDTEAM_060
+  taxonomy: excessive_agency
+  severity: 8
+  owasp: LLM06
+  pattern: "(draft|compose|write|prepare).{0,30}(send|dispatch|transmit|forward|deliver).{0,60}(executive|leadership|ceo|cto|cfo|chief|management|director|officer)"
+  description: "Requesting AI to compose and send communications to company executives."

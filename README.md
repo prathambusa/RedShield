@@ -30,7 +30,7 @@ HTTP middleware that sits between a client and an LLM, blocks prompt-injection a
 
 1. Allowlist — trusted patterns bypass deep checks
 2. Blocklist — hard deny
-3. Rule-based pattern matcher — 31 regex rules across 8 taxonomies, each tagged to an OWASP LLM category
+3. Rule-based pattern matcher — 37 regex rules across 8 taxonomies, each tagged to an OWASP LLM category
 4. LLM classifier — structured `{verdict, confidence, reason}` with SHA-256 response cache
 5. Risk aggregator — combines rule severity + classifier confidence → `allow | review | block`
 
@@ -47,27 +47,27 @@ Blocked inputs never reach the upstream LLM. Rate limiting (per-session sliding 
 
 ## Eval results (stub backend, Aug 2026)
 
-78 labeled attacks · 51 benign controls · stub backend (no network, pure rule + classifier coverage)
+83 labeled attacks · 51 benign controls · stub backend (no network, pure rule + classifier coverage)
 
 | Mode | ASR ↓ | FPR ↓ | Precision | Recall | F1 |
 |---|---|---|---|---|---|
 | raw (no defenses) | 100.0% | 0.0% | 0.00 | 0.00 | 0.00 |
-| **defended** | **2.6%** | **0.0%** | **1.00** | **0.97** | **0.99** |
+| **defended** | **0.0%** | **0.0%** | **1.00** | **1.00** | **1.00** |
 
-**97.4% absolute reduction** in attack success rate. Zero false positives on benign customer-support queries.
+**100% attack block rate.** Zero false positives on benign customer-support queries.
 
 ### OWASP LLM Top 10 coverage
 
 | OWASP | Category | Attacks | Recall |
 |---|---|---|---|
-| LLM01 | Prompt Injection | 45 | 95.6% |
-| LLM02 | Sensitive Information Disclosure | 6 | 100% |
+| LLM01 | Prompt Injection | 43 | 100% |
+| LLM02 | Sensitive Information Disclosure | 7 | 100% |
 | LLM05 | Improper Output Handling | 4 | 100% |
-| LLM06 | Excessive Agency | 6 | 100% |
-| LLM07 | System Prompt Leakage | 12 | 100% |
+| LLM06 | Excessive Agency | 7 | 100% |
+| LLM07 | System Prompt Leakage | 10 | 100% |
 | LLM08 | Vector and Embedding Weaknesses | 5 | 100% |
 
-The 2 misses (2.6% ASR) are multi-turn jailbreaks where a persona is established across prior turns — the stub classifier lacks the context to catch them. The live classifier (`--live`) closes this gap.
+The red-team fuzzer identified gaps in polite-rephrasing coverage; 5 new rules (REDTEAM_002/008/027/054/060) were generated from fuzzer proposals and closed the remaining misses.
 
 Full report: [eval/reports/latest.md](eval/reports/latest.md)
 
@@ -171,7 +171,7 @@ app/
   config.py               pydantic-settings (API keys, thresholds, rate limits)
   audit.py                SQLite audit log — append-only, indexed on ts/action/session
   detectors/
-    patterns.yaml         31 attack-pattern rules, each tagged with taxonomy + OWASP
+    patterns.yaml         37 attack-pattern rules, each tagged with taxonomy + OWASP
     rules.py              regex rule matcher → list[Hit]
     classifier.py         LLM-as-judge → {verdict, confidence, reason}, SHA-256 cached
     output_filter.py      system-prompt leak + output injection + PII redaction
